@@ -1,0 +1,47 @@
+.form__content {
+    text-align: center;
+}
+
+.form__group {
+    margin: 20px 0;
+}
+
+.form__input {
+    border: solid 2px #A9A9A9;
+    border-radius: 5px;
+    width: 40%;
+    margin: 5px 0;
+    padding: 15px 10px;
+    font-size: 15px;
+    color: #808080;
+}
+
+.form__error {
+    color: red;
+}
+
+.form__button-submit {
+    border: none;
+    border-radius: 5px;
+    width: 40%;
+    margin: 5px;
+    padding: 15px 10px;
+    font-size: 15px;
+    color: white;
+    background-color: blue;
+}
+
+.link__group {
+    margin-top: 30px;
+}
+
+.link__group-text {
+    color: #808080;
+    font-weight: bold;
+}
+
+.link__button-submit {
+    text-decoration: none;
+    color: blue;
+    font-weight: bold;
+}

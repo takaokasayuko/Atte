@@ -1,0 +1,37 @@
+body {
+  max-width: 1230px;
+  min-width: 769px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+}
+.header-nav{
+  display: flex;
+}
+.header-nav__item{
+  margin: 0 15px;
+  font-size: 20px;
+}
+.header-nav__link{
+  text-decoration: none;
+  cursor: pointer;
+  color: black;
+}
+.header-nav__button{
+  border: none;
+  cursor: pointer;
+  background-color: inherit;
+  font-size: 20px;
+}
+
+main {
+  background-color: #F2F2F2;
+  padding: 40px 0 100px;
+}
+
+.footer{
+  text-align: center;
+  margin: 20px 0;
+}
