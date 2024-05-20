@@ -118,6 +118,8 @@ return [
     'url'                  => ':attributeは、有効なURL形式で指定してください。',
     'uuid'                 => ':attributeは、有効なUUIDでなければなりません。',
 
+    'email:strict,dns,spoof' => '半角英数字で入力',
+
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -130,8 +132,9 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'email' => [
+            'required' => 'メールアドレスは入力必須です',
+            'email' => 'メールアドレスは「ユーザー名@ドメイン」形式で入力してください',
         ],
     ],
 

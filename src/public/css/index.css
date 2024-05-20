@@ -1,0 +1,24 @@
+.attendance__heading-name{
+  text-align: center;
+}
+
+.attendance__group{
+  margin: 0 auto;
+  width: 90%;
+  display: grid;
+  grid-template-rows: 250px 250px;
+  grid-template-columns: 1fr 1fr;
+}
+.attendance__button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px;
+  background-color: white;
+}
+.attendance__button-submit{
+  font-size: 30px;
+  border: none;
+  background-color: inherit;
+  cursor: pointer;
+}

@@ -6,4 +6,61 @@
 
 @section('content')
 
+
+<div class="attendance__content">
+  <div class="attendance__heading">
+    <h2 class="attendance__heading-name">{{ $user['name'] }}さんお疲れ様です！</h2>
+  </div>
+
+  <div class="attendance__group">
+    <div class="attendance__button">
+      <form class="form__work-start" action="/work_start" method="post">
+        @csrf
+        @if($button == 0)
+        <button class="attendance__button-submit">勤務開始</button>
+        @else
+        <button disabled class="attendance__button-submit">勤務開始</button>
+        @endif
+      </form>
+    </div>
+
+    <div class="attendance__button">
+      <form class="form__work-end" action="/work_end" method="post">
+        @csrf
+        @if($button == 1)
+        <button class="attendance__button-submit">勤務終了</button>
+        @else
+        <button disabled class="attendance__button-submit">勤務終了</button>
+        @endif
+
+      </form>
+    </div>
+
+    <div class="attendance__button">
+      <form class="form__rest-start" action="/rest_start" method="post">
+        @csrf
+        @if($button == 1)
+        <button class="attendance__button-submit">休憩開始</button>
+        @else
+        <button disabled class="attendance__button-submit">休憩開始</button>
+        @endif
+
+      </form>
+    </div>
+
+    <div class="attendance__button">
+      <form class="form__rest-end" action="/rest_end" method="post">
+        @csrf
+        @if($button == 2)
+        <button class="attendance__button-submit">休憩終了</button>
+        @else
+        <button disabled class="attendance__button-submit">休憩終了</button>
+        @endif
+
+      </form>
+    </div>
+  </div>
+
+</div>
+
 @endsection
