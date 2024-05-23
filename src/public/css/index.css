@@ -1,6 +1,12 @@
 .attendance__heading-name{
   text-align: center;
 }
+.error__message{
+  text-align: center;
+  color: red;
+  font-size: 25px;
+
+}
 
 .attendance__group{
   margin: 0 auto;

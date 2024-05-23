@@ -12,6 +12,12 @@
     <h2 class="attendance__heading-name">{{ $user['name'] }}さんお疲れ様です！</h2>
   </div>
 
+  @if(session('message'))
+  <div class="error__message">
+    {{ session('message') }}
+  </div>
+  @endif
+
   <div class="attendance__group">
     <div class="attendance__button">
       <form class="form__work-start" action="/work_start" method="post">

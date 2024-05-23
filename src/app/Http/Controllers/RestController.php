@@ -14,8 +14,8 @@ class RestController extends Controller
   public function store()
   {
     $user = Auth::user();
-
     $today = Carbon::now();
+
     $today_date = $today->toDateString();
     $work_start =
       Attendance::where('user_id', $user->id)
@@ -26,7 +26,7 @@ class RestController extends Controller
 
     //出勤日と休憩開始日が異なる場合
     while ($date < $today_date) {
-   
+
       //退勤時間を登録
       $end_time = '23:59:59';
       $end_date_string = $date . ' ' . $end_time;
@@ -47,9 +47,7 @@ class RestController extends Controller
         'user_id' => $user->id,
         'work_start' => $work_start
       ]);
-
     };
-
     $attendance_id =
       Attendance::where('user_id', $user->id)
       ->latest('id')
@@ -58,7 +56,6 @@ class RestController extends Controller
       'attendance_id' => $attendance_id['id'],
       'rest_start' => $today
     ]);
-
     return redirect('/');
   }
 
@@ -70,7 +67,6 @@ class RestController extends Controller
       Attendance::where('user_id', $user->id)
       ->latest('id')
       ->first('id');
-
 
     $today = Carbon::now();
     $today_date = $today->toDateString();
@@ -114,15 +110,14 @@ class RestController extends Controller
         'work_start' => $work_start
       ]);
 
-      $next_id =
+      $attendance_id =
       Attendance::where('user_id', $user->id)
       ->latest('id')
       ->first('id');
       Rest::create([
-        'attendance_id' => $next_id['id'],
+        'attendance_id' => $attendance_id['id'],
         'rest_start' => $work_start
       ]);
-
     };
 
     Rest::where('attendance_id', $attendance_id->id)
@@ -131,8 +126,6 @@ class RestController extends Controller
       ->update([
         'rest_end' => $today
       ]);
-
-
     return redirect('/');
   }
 }

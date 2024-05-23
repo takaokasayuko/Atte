@@ -14,7 +14,6 @@ class AttendanceController extends Controller
   public function index()
   {
     $user = Auth::user();
-
     //ボタンの活性・非活性
     $status_work = Attendance::where('user_id', $user->id)
       ->latest('id')
@@ -30,8 +29,6 @@ class AttendanceController extends Controller
         ->first();
     };
 
-
-
     if (empty($attendance_id) == true || empty($status_work['work_end']) == false) {
       $button = 0; //出勤ボタンを活性
     } elseif (empty($status_rest['rest_start']) == false && empty($status_rest['rest_end']) == true) {
@@ -39,29 +36,42 @@ class AttendanceController extends Controller
     } else {
       $button = 1; //休憩開始と退勤ボタンを活性
     };
-
     return view('index', compact('user', 'button'));
   }
 
   // 出勤
   public function store()
   {
-    $user_id = Auth::id();
-    $work_start = new Carbon();
+    $user = Auth::user();
+    $today = new Carbon();
+    $today_date = $today->toDateString();
+    $work_start =
+      Attendance::where('user_id', $user->id)
+      ->latest('id')
+      ->first();
+    if (!empty($work_start)) {
+      $start_date = Carbon::parse($work_start['work_start']);
+      $date = $start_date->toDateString();
+    }
 
-    Attendance::create([
-      'user_id' => $user_id,
-      'work_start' => $work_start
-    ]);
-    return redirect('/');
+    //1日1回まで
+    if (empty($work_start) == true || $date < $today_date) {
+      Attendance::create([
+        'user_id' => $user->id,
+        'work_start' => $today
+      ]);
+      return redirect('/');
+    } else {
+      return redirect('/')->with('message', "本日は出勤済みです");
+    }
   }
 
   // 退勤
   public function update()
   {
     $user = Auth::user();
-
     $today = Carbon::now();
+
     $today_date = $today->toDateString();
     $work_start =
       Attendance::where('user_id', $user->id)
@@ -93,14 +103,12 @@ class AttendanceController extends Controller
         'work_start' => $work_start
       ]);
     };
-
     Attendance::where('user_id', $user->id)
       ->latest('id')
       ->first()
       ->update([
         'work_end' => $today
       ]);
-
     return redirect('/');
   }
 }
