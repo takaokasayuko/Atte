@@ -22,7 +22,7 @@
     <div class="attendance__button">
       <form class="form__work-start" action="/work_start" method="post">
         @csrf
-        @if($button == 0)
+        @if(!$status_work && !$status_rest)
         <button class="attendance__button-submit">勤務開始</button>
         @else
         <button disabled class="attendance__button-submit">勤務開始</button>
@@ -33,7 +33,7 @@
     <div class="attendance__button">
       <form class="form__work-end" action="/work_end" method="post">
         @csrf
-        @if($button == 1)
+        @if($status_work && !$status_rest)
         <button class="attendance__button-submit">勤務終了</button>
         @else
         <button disabled class="attendance__button-submit">勤務終了</button>
@@ -45,7 +45,7 @@
     <div class="attendance__button">
       <form class="form__rest-start" action="/rest_start" method="post">
         @csrf
-        @if($button == 1)
+        @if($status_work && !$status_rest)
         <button class="attendance__button-submit">休憩開始</button>
         @else
         <button disabled class="attendance__button-submit">休憩開始</button>
@@ -57,7 +57,7 @@
     <div class="attendance__button">
       <form class="form__rest-end" action="/rest_end" method="post">
         @csrf
-        @if($button == 2)
+        @if($status_work && $status_rest)
         <button class="attendance__button-submit">休憩終了</button>
         @else
         <button disabled class="attendance__button-submit">休憩終了</button>

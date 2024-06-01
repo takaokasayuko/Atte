@@ -85,7 +85,6 @@ class RestController extends Controller
       $end_date_string = $date . ' ' . $end_time;
       $end_date = Carbon::createFromFormat('Y-m-d H:i:s', $end_date_string);
 
-
       Rest::where('attendance_id', $attendance_id->id)
       ->latest('id')
       ->first()
@@ -113,7 +112,7 @@ class RestController extends Controller
       $attendance_id =
       Attendance::where('user_id', $user->id)
       ->latest('id')
-      ->first('id');
+      ->first();
       Rest::create([
         'attendance_id' => $attendance_id['id'],
         'rest_start' => $work_start
@@ -121,7 +120,7 @@ class RestController extends Controller
     };
 
     Rest::where('attendance_id', $attendance_id->id)
-      ->latest('updated_at')
+      ->latest('id')
       ->first()
       ->update([
         'rest_end' => $today

@@ -23,4 +23,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/rest_start', [RestController::class, 'store']);
     Route::post('/rest_end', [RestController::class, 'update']);
+
+    Route::get('/attendance', [AttendanceController::class, 'attendance'])-> name('attendance');
+    Route::post('/another_date', [AttendanceController::class, 'date']);
 });

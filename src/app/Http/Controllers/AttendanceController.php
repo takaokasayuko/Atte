@@ -5,17 +5,22 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Rest;
 use Illuminate\Http\Request;
+// use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
-use Carbon\Carbon;
 
+
+
+use Carbon\Carbon;
+use PhpParser\Node\Expr\Cast;
 
 class AttendanceController extends Controller
 {
+  //打刻ページ
   public function index()
   {
     $user = Auth::user();
     //ボタンの活性・非活性
-    $status_work = Attendance::where('user_id', $user->id)
+    $work = Attendance::where('user_id', $user->id)
       ->latest('id')
       ->first();
     $attendance_id = Attendance::where('user_id', $user->id)
@@ -23,20 +28,26 @@ class AttendanceController extends Controller
       ->first('id');
 
     if (!empty($attendance_id)) {
-      $status_rest =
+      $rest =
         Rest::where('attendance_id', $attendance_id->id)
         ->latest('id')
         ->first();
     };
 
-    if (empty($attendance_id) == true || empty($status_work['work_end']) == false) {
-      $button = 0; //出勤ボタンを活性
-    } elseif (empty($status_rest['rest_start']) == false && empty($status_rest['rest_end']) == true) {
-      $button = 2; //休憩終了ボタンを活性
+    if (empty($attendance_id) || !empty($work['work_end'])) {
+      //出勤ボタンを活性
+      $status_work = false;
+      $status_rest = false;
+    } elseif (!empty($rest['rest_start']) && empty($rest['rest_end'])) {
+      //休憩終了ボタンを活性
+      $status_work = true;
+      $status_rest = true;
     } else {
-      $button = 1; //休憩開始と退勤ボタンを活性
+      //休憩開始と退勤ボタンを活性
+      $status_work = true;
+      $status_rest = false;
     };
-    return view('index', compact('user', 'button'));
+    return view('index', compact('user', 'status_work', 'status_rest'));
   }
 
   // 出勤
@@ -55,14 +66,14 @@ class AttendanceController extends Controller
     }
 
     //1日1回まで
-    if (empty($work_start) == true || $date < $today_date) {
+    if (!empty($work_start) && $date >= $today_date) {
+      return redirect('/')->with('message', "本日は出勤済みです");
+    } else {
       Attendance::create([
         'user_id' => $user->id,
         'work_start' => $today
       ]);
       return redirect('/');
-    } else {
-      return redirect('/')->with('message', "本日は出勤済みです");
     }
   }
 
@@ -110,5 +121,66 @@ class AttendanceController extends Controller
         'work_end' => $today
       ]);
     return redirect('/');
+  }
+
+  //日付別勤怠ページ
+  public function attendance(Request $request)
+  {
+
+
+
+    $date = $request->input('date', Carbon::now()->toDateString());
+    
+
+
+    $attendances = Attendance::query()->orderBy('work_end')->with('user', 'rests')->whereDate('work_end', $date)->paginate(5);
+
+
+    $work_times = $attendances->map(function ($attendance) {
+      $work_start = new Carbon($attendance->work_start);
+      $work_end = new Carbon($attendance->work_end);
+
+      //休憩時間の計算
+      $rest_time_seconds = $attendance->rests->reduce(function ($carry, $rest) {
+        $rest_start = new Carbon($rest->rest_start);
+        $rest_end = new Carbon($rest->rest_end);
+        return $carry + $rest_start->diffInSeconds($rest_end);
+      }, 0);
+
+      $rest_hours = floor($rest_time_seconds / 3600);
+      $rest_minutes = floor(($rest_time_seconds % 3600) / 60);
+      $rest_seconds = floor($rest_time_seconds % 60);
+      $rest_time = Carbon::createFromTime($rest_hours, $rest_minutes, $rest_seconds)->ToTimeString();
+
+      //勤務時間の計算
+      $total_time_seconds = $work_start->diffInSeconds($work_end) - $rest_time_seconds;
+      $total_hours = floor($total_time_seconds / 3600);
+      $total_minutes = floor(($total_time_seconds % 3600) / 60);
+      $total_seconds = floor($total_time_seconds % 60);
+      $total_time = Carbon::createFromTime($total_hours, $total_minutes, $total_seconds)->ToTimeString();
+
+      return [
+        'user' => $attendance->user->name,
+        'date' => $work_start->toDateString(),
+        'work_start' => $work_start->toTimeString(),
+        'work_end' => $work_end->toTimeString(),
+        'rest_time' => $rest_time,
+        'total_time' => $total_time
+      ];
+    });
+    return view('attendance', compact('work_times', 'date', 'attendances'));
+  }
+
+  public function date(Request $request)
+  {
+
+    if ($request['previous_date']) {
+      $date = Carbon::parse($request['previous_date'])->subDay()->toDateString();
+    }
+    if ($request['next_date']) {
+      $date = Carbon::parse($request['next_date'])->addDay()->toDateString();
+    }
+
+    return redirect('/attendance')->with(compact('date'));
   }
 }

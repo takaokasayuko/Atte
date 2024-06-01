@@ -13,7 +13,7 @@ class Rest extends Model
         'id',
     ];
 
-    public function user()
+    public function attendance()
     {
         return $this->belongsTo(Attendance::class);
     }
