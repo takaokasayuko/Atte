@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Attendance;
 use App\Models\Rest;
 use Illuminate\Http\Request;
-// use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -126,15 +125,8 @@ class AttendanceController extends Controller
   //日付別勤怠ページ
   public function attendance(Request $request)
   {
-
-
-
     $date = $request->input('date', Carbon::now()->toDateString());
-    
-
-
     $attendances = Attendance::query()->orderBy('work_end')->with('user', 'rests')->whereDate('work_end', $date)->paginate(5);
-
 
     $work_times = $attendances->map(function ($attendance) {
       $work_start = new Carbon($attendance->work_start);
@@ -171,16 +163,4 @@ class AttendanceController extends Controller
     return view('attendance', compact('work_times', 'date', 'attendances'));
   }
 
-  public function date(Request $request)
-  {
-
-    if ($request['previous_date']) {
-      $date = Carbon::parse($request['previous_date'])->subDay()->toDateString();
-    }
-    if ($request['next_date']) {
-      $date = Carbon::parse($request['next_date'])->addDay()->toDateString();
-    }
-
-    return redirect('/attendance')->with(compact('date'));
-  }
 }
