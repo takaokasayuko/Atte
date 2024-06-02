@@ -55,9 +55,8 @@ class AttendanceController extends Controller
     $user = Auth::user();
     $today = new Carbon();
     $today_date = $today->toDateString();
-    $work_start =
-      Attendance::where('user_id', $user->id)
-      ->latest('id')
+    $work_start = Attendance::where('user_id', $user->id)
+      ->latest('work_end')
       ->first();
     if (!empty($work_start)) {
       $start_date = Carbon::parse($work_start['work_start']);
@@ -83,9 +82,8 @@ class AttendanceController extends Controller
     $today = Carbon::now();
 
     $today_date = $today->toDateString();
-    $work_start =
-      Attendance::where('user_id', $user->id)
-      ->latest('id')
+    $work_start = Attendance::where('user_id', $user->id)
+      ->latest('work_end')
       ->first();
     $start_date = Carbon::parse($work_start['work_start']);
     $date = $start_date->toDateString();
@@ -126,7 +124,10 @@ class AttendanceController extends Controller
   public function attendance(Request $request)
   {
     $date = $request->input('date', Carbon::now()->toDateString());
-    $attendances = Attendance::query()->orderBy('work_end')->with('user', 'rests')->whereDate('work_end', $date)->paginate(5);
+    $attendances = Attendance::orderBy('work_start')
+      ->with('user', 'rests')
+      ->whereDate('work_end', $date)
+      ->paginate(5);
 
     $work_times = $attendances->map(function ($attendance) {
       $work_start = new Carbon($attendance->work_start);
@@ -162,5 +163,4 @@ class AttendanceController extends Controller
     });
     return view('attendance', compact('work_times', 'date', 'attendances'));
   }
-
 }

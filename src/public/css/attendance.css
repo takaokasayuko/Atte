@@ -51,9 +51,9 @@
 
 .pagination__date{
   margin: 10px auto 0;
-    width: 30%;
-    display: flex;
-    justify-content: space-between;
+  width: 30%;
+  display: flex;
+  justify-content: space-between;
 }
 
 .attendance__date{

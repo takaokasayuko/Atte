@@ -6,7 +6,6 @@
 
 @section('content')
 
-
 <div class="attendance__content">
   <div class="attendance__heading">
     <h2 class="attendance__heading-name">{{ $user['name'] }}さんお疲れ様です！</h2>

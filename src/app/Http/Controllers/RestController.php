@@ -17,8 +17,7 @@ class RestController extends Controller
     $today = Carbon::now();
 
     $today_date = $today->toDateString();
-    $work_start =
-      Attendance::where('user_id', $user->id)
+    $work_start = Attendance::where('user_id', $user->id)
       ->latest('id')
       ->first();
     $start_date = Carbon::parse($work_start['work_start']);
@@ -26,7 +25,6 @@ class RestController extends Controller
 
     //出勤日と休憩開始日が異なる場合
     while ($date < $today_date) {
-
       //退勤時間を登録
       $end_time = '23:59:59';
       $end_date_string = $date . ' ' . $end_time;
@@ -48,8 +46,7 @@ class RestController extends Controller
         'work_start' => $work_start
       ]);
     };
-    $attendance_id =
-      Attendance::where('user_id', $user->id)
+    $attendance_id = Attendance::where('user_id', $user->id)
       ->latest('id')
       ->first('id');
     Rest::create([
@@ -63,15 +60,13 @@ class RestController extends Controller
   public function update()
   {
     $user = Auth::user();
-    $attendance_id =
-      Attendance::where('user_id', $user->id)
+    $attendance_id = Attendance::where('user_id', $user->id)
       ->latest('id')
       ->first('id');
 
     $today = Carbon::now();
     $today_date = $today->toDateString();
-    $rest_start =
-      Rest::where('attendance_id', $attendance_id->id)
+    $rest_start = Rest::where('attendance_id', $attendance_id->id)
       ->latest('id')
       ->first();
 
@@ -86,11 +81,11 @@ class RestController extends Controller
       $end_date = Carbon::createFromFormat('Y-m-d H:i:s', $end_date_string);
 
       Rest::where('attendance_id', $attendance_id->id)
-      ->latest('id')
-      ->first()
-      ->update([
-        'rest_end' => $end_date
-      ]);
+        ->latest('id')
+        ->first()
+        ->update([
+          'rest_end' => $end_date
+        ]);
 
       Attendance::where('user_id', $user->id)
         ->latest('id')
@@ -109,10 +104,9 @@ class RestController extends Controller
         'work_start' => $work_start
       ]);
 
-      $attendance_id =
-      Attendance::where('user_id', $user->id)
-      ->latest('id')
-      ->first();
+      $attendance_id = Attendance::where('user_id', $user->id)
+        ->latest('id')
+        ->first();
       Rest::create([
         'attendance_id' => $attendance_id['id'],
         'rest_start' => $work_start

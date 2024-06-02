@@ -23,7 +23,7 @@
 
     <div class="form__group">
       <div class="form__group-content">
-        <input class="form__input" type="text" name="email" id="email" placeholder="メールアドレス" value="{{ old('email') }}">
+        <input class="form__input" type="email" name="email" id="email" placeholder="メールアドレス" value="{{ old('email') }}">
       </div>
       <div class="form__error">
         @error('email')
