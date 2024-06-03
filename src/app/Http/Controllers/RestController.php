@@ -62,7 +62,7 @@ class RestController extends Controller
     $user = Auth::user();
     $attendance_id = Attendance::where('user_id', $user->id)
       ->latest('id')
-      ->first('id');
+      ->first();
 
     $today = Carbon::now();
     $today_date = $today->toDateString();
@@ -108,7 +108,7 @@ class RestController extends Controller
         ->latest('id')
         ->first();
       Rest::create([
-        'attendance_id' => $attendance_id['id'],
+        'attendance_id' => $attendance_id->id,
         'rest_start' => $work_start
       ]);
     };
