@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\RestController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +18,25 @@ use App\Http\Controllers\RestController;
 |
 */
 
-Route::middleware('auth')->group(function () {
+// Route::middleware('verified')->
+//     middleware('auth')->group(function () {
+//     Route::get('/', [AttendanceController::class, 'index']);
+//     Route::post('/work_start', [AttendanceController::class, 'store']);
+//     Route::post('/work_end', [AttendanceController::class, 'update']);
+
+//     Route::post('/rest_start', [RestController::class, 'store']);
+//     Route::post('/rest_end', [RestController::class, 'update']);
+
+//     Route::get('/attendance', [AttendanceController::class, 'attendance'])-> name('attendance');
+// });
+
+// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+//     $request->fulfill();
+
+//     return redirect('/');
+// })->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::middleware(['verified'])->group(function () {
     Route::get('/', [AttendanceController::class, 'index']);
     Route::post('/work_start', [AttendanceController::class, 'store']);
     Route::post('/work_end', [AttendanceController::class, 'update']);
@@ -24,5 +44,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/rest_start', [RestController::class, 'store']);
     Route::post('/rest_end', [RestController::class, 'update']);
 
-    Route::get('/attendance', [AttendanceController::class, 'attendance'])-> name('attendance');
+    Route::get('/attendance', [AttendanceController::class, 'attendance'])->name('attendance');
 });
+
+Route::post('/email/verification-notification', function (Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+
+
+
+
