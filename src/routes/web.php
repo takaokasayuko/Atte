@@ -18,24 +18,6 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::middleware('verified')->
-//     middleware('auth')->group(function () {
-//     Route::get('/', [AttendanceController::class, 'index']);
-//     Route::post('/work_start', [AttendanceController::class, 'store']);
-//     Route::post('/work_end', [AttendanceController::class, 'update']);
-
-//     Route::post('/rest_start', [RestController::class, 'store']);
-//     Route::post('/rest_end', [RestController::class, 'update']);
-
-//     Route::get('/attendance', [AttendanceController::class, 'attendance'])-> name('attendance');
-// });
-
-// Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
-//     $request->fulfill();
-
-//     return redirect('/');
-// })->middleware(['auth', 'signed'])->name('verification.verify');
-
 Route::middleware(['verified'])->group(function () {
     Route::get('/', [AttendanceController::class, 'index']);
     Route::post('/work_start', [AttendanceController::class, 'store']);
@@ -47,6 +29,7 @@ Route::middleware(['verified'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'attendance'])->name('attendance');
 });
 
+//認証メールの再送信
 Route::post('/email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
 

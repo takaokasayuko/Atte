@@ -74,7 +74,6 @@ return [
     |
     */
 
-    // 'home' => RouteServiceProvider::HOME,
     'home' => env('APP_URL'),
 
     /*
