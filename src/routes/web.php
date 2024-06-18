@@ -27,6 +27,8 @@ Route::middleware(['verified'])->group(function () {
     Route::post('/rest_end', [RestController::class, 'update']);
 
     Route::get('/attendance', [AttendanceController::class, 'attendance'])->name('attendance');
+
+    Route::get('/user', [AttendanceController::class, 'user']);
 });
 
 //認証メールの再送信

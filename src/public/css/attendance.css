@@ -23,7 +23,7 @@
 .attendance__label,
 .attendance__data{
   padding: 15px 40px;
-  text-align: left;
+  text-align: center;
 }
 
 /* 勤怠のページネーション */

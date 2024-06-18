@@ -4,12 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\Rest;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
-
-
 use Carbon\Carbon;
+use Illuminate\Pagination\LengthAwarePaginator;
 use PhpParser\Node\Expr\Cast;
 
 class AttendanceController extends Controller
@@ -162,5 +161,42 @@ class AttendanceController extends Controller
       ];
     });
     return view('attendance', compact('work_times', 'date', 'attendances'));
+  }
+
+  //ユーザー一覧ページ
+  public function user(Request $request)
+  {
+    $users_all = User::all();
+
+    $work_starts = $users_all->map(function ($user_all) {
+      $latest_work_start = $user_all->attendances()
+        ->latest('work_start')->first();
+
+      if ($latest_work_start) {
+        $latest_date = new Carbon($latest_work_start->work_start);
+        return [
+          'name' => $user_all->name,
+          'latest_date' => $latest_date->toDateString(),
+        ];
+      } else {
+        return [
+          'name' => $user_all->name,
+          'latest_date' => null,
+        ];
+      }
+    });
+
+    $sorted_users = $work_starts->sortByDesc('latest_date');
+
+    $per_page = 10;
+    $page = $request->get('page', 1);
+    $users = new LengthAwarePaginator(
+      $sorted_users->forPage($page, $per_page),
+      $sorted_users->count(),
+      $per_page,
+      $page,
+      ['path' => $request->url(), 'query' => $request->query()]
+    );
+    return view('user', compact('users'));
   }
 }
