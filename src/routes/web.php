@@ -29,6 +29,8 @@ Route::middleware(['verified'])->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'attendance'])->name('attendance');
 
     Route::get('/user', [AttendanceController::class, 'user']);
+    Route::get('/user/{user}', [AttendanceController::class, 'detail'])->name('user.detail');
+
 });
 
 //認証メールの再送信

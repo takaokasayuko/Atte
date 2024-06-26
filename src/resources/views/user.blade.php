@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('css')
-<link rel="stylesheet" href="{{ asset('css/attendance.css') }}">
+<link rel="stylesheet" href="{{ asset('css/user.css') }}">
 @endsection
 
 @section('content')
@@ -19,7 +19,7 @@
     <td class="attendance__data">{{ $users->firstItem() + $loop->index }}</td>
     <td class="attendance__data">{{ $user['name'] }}</td>
     <td class="attendance__data">{{ $user['latest_date'] }}</td>
-    <td class="attendance__data"><a class="attendance__data-btn" href="">詳細</a></td>
+    <td class="attendance__data"><a class="attendance__data-btn" href="{{ route('user.detail', ['user' => $user['user_id']]) }}">詳細</a></td>
     @endforeach
   </tr>
 </table>

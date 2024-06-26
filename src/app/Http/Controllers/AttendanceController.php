@@ -18,12 +18,9 @@ class AttendanceController extends Controller
   {
     $user = Auth::user();
     //ボタンの活性・非活性
-    $work = Attendance::where('user_id', $user->id)
-      ->latest('id')
-      ->first();
     $attendance_id = Attendance::where('user_id', $user->id)
-      ->latest('id')
-      ->first('id');
+      ->latest('work_start')
+      ->first();
 
     if (!empty($attendance_id)) {
       $rest =
@@ -32,7 +29,7 @@ class AttendanceController extends Controller
         ->first();
     };
 
-    if (empty($attendance_id) || !empty($work['work_end'])) {
+    if (empty($attendance_id) || !empty($attendance_id['work_end'])) {
       //出勤ボタンを活性
       $status_work = false;
       $status_rest = false;
@@ -82,7 +79,7 @@ class AttendanceController extends Controller
 
     $today_date = $today->toDateString();
     $work_start = Attendance::where('user_id', $user->id)
-      ->latest('work_end')
+      ->latest('work_start')
       ->first();
     $start_date = Carbon::parse($work_start['work_start']);
     $date = $start_date->toDateString();
@@ -169,25 +166,29 @@ class AttendanceController extends Controller
     $users_all = User::all();
 
     $work_starts = $users_all->map(function ($user_all) {
-      $latest_work_start = $user_all->attendances()
-        ->latest('work_start')->first();
+      $latest_work_start = $user_all
+        ->attendances()
+        ->latest('work_start')
+        ->first();
 
       if ($latest_work_start) {
         $latest_date = new Carbon($latest_work_start->work_start);
         return [
+          'user_id' => $user_all->id,
           'name' => $user_all->name,
           'latest_date' => $latest_date->toDateString(),
         ];
       } else {
         return [
+          'user_id' => $user_all->id,
           'name' => $user_all->name,
           'latest_date' => null,
         ];
       }
     });
 
+    //ページネーション
     $sorted_users = $work_starts->sortByDesc('latest_date');
-
     $per_page = 10;
     $page = $request->get('page', 1);
     $users = new LengthAwarePaginator(
@@ -198,5 +199,69 @@ class AttendanceController extends Controller
       ['path' => $request->url(), 'query' => $request->query()]
     );
     return view('user', compact('users'));
+  }
+
+  //ユーザー詳細ページ
+  public function detail(User $user, Request $request)
+  {
+    $month = $request->input('month', Carbon::now()->format('Y-m'));
+
+    $start_date = Carbon::parse($month)->startOfMonth();
+    $end_date = Carbon::parse($month)->endOfMonth();
+
+    $days = [];
+    $diff_days = $start_date->daysInMonth;
+    for ($i = 1; $i <= $diff_days; $i++) {
+      $days[] = $start_date->toDateString();
+      $start_date->addDays();
+    }
+
+    $month_work = 0;
+    $dates = [];
+    foreach ($days as $day) {
+      $attendance = Attendance::with('rests')
+        ->where('user_id', $user->id)
+        ->whereDate('work_end', $day)
+        ->first();
+
+      if ($attendance) {
+        $rest_time_seconds = $attendance->rests->reduce(function ($carry, $rest) {
+          $rest_start = new Carbon($rest->rest_start);
+          $rest_end = new Carbon($rest->rest_end);
+          return $carry + $rest_start->diffInSeconds($rest_end);
+        }, 0);
+
+        $rest_hours = floor($rest_time_seconds / 3600);
+        $rest_minutes = floor(($rest_time_seconds % 3600) / 60);
+        $rest_seconds = floor($rest_time_seconds % 60);
+        $rest_time = Carbon::createFromTime($rest_hours, $rest_minutes, $rest_seconds)->ToTimeString();
+
+        $total_time_seconds = Carbon::parse($attendance->work_start)->diffInSeconds(Carbon::parse($attendance->work_end)) - $rest_time_seconds;
+        $total_hours = floor($total_time_seconds / 3600);
+        $total_minutes = floor(($total_time_seconds % 3600) / 60);
+        $total_seconds = floor($total_time_seconds % 60);
+        $total_time = Carbon::createFromTime($total_hours, $total_minutes, $total_seconds)->ToTimeString();
+
+        $dates[$day] = [
+          'work_start' => Carbon::parse($attendance->work_start)->toTimeString(),
+          'work_end' => Carbon::parse($attendance->work_end)->toTimeString(),
+          'rest_time' => $rest_time,
+          'total_time' => $total_time,
+        ];
+
+        $month_work += $total_time_seconds;
+
+      } else {
+        $dates[$day] = null;
+      }
+    }
+
+    //月の合計勤務時間
+    $month_work_hours = floor($month_work / 3600);
+    $month_work_minutes = floor(($month_work  % 3600) / 60);
+    $month_work_seconds = floor($month_work  % 60);
+    $month_work_time = $month_work_hours . '時間' . $month_work_minutes . '分' . $month_work_seconds . '秒';
+
+    return view('user-detail', compact('dates', 'user', 'month', 'month_work_time'));
   }
 }

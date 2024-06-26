@@ -48,7 +48,7 @@ class RestController extends Controller
     };
     $attendance_id = Attendance::where('user_id', $user->id)
       ->latest('id')
-      ->first('id');
+      ->first();
     Rest::create([
       'attendance_id' => $attendance_id['id'],
       'rest_start' => $today
