@@ -264,4 +264,9 @@ class AttendanceController extends Controller
 
     return view('user-detail', compact('dates', 'user', 'month', 'month_work_time'));
   }
+
+  public function auth()
+  {
+    return view('auth.auth');
+  }
 }

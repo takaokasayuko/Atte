@@ -7,6 +7,7 @@ use App\Http\Controllers\RestController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,6 +20,8 @@ use Illuminate\Http\Request;
 */
 
 Route::middleware(['verified'])->group(function () {
+    Route::get('/auth', [AttendanceController::class, 'auth']);
+
     Route::get('/', [AttendanceController::class, 'index']);
     Route::post('/work_start', [AttendanceController::class, 'store']);
     Route::post('/work_end', [AttendanceController::class, 'update']);
@@ -30,8 +33,8 @@ Route::middleware(['verified'])->group(function () {
 
     Route::get('/user', [AttendanceController::class, 'user']);
     Route::get('/user/{user}', [AttendanceController::class, 'detail'])->name('user.detail');
-
 });
+
 
 //認証メールの再送信
 Route::post('/email/verification-notification', function (Request $request) {
@@ -39,7 +42,3 @@ Route::post('/email/verification-notification', function (Request $request) {
 
     return back()->with('message', 'Verification link sent!');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
-
-
-

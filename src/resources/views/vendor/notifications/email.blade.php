@@ -6,7 +6,7 @@
 @if ($level === 'error')
 # @lang('Whoops!')
 @else
-# @lang('ありがとうございます!')
+# @lang('メールアドレス認証のお願い')
 @endif
 @endif
 
@@ -43,7 +43,7 @@ switch ($level) {
 @if (! empty($salutation))
 {{ $salutation }}
 @else
-@lang('よろしくお願いします。')<br>
+@lang('本メールにお心当たりがない場合は、恐れ入りますが破棄していただきますようお願いいたします。')<br>
 {{ config('app.name') }}
 @endif
 
@@ -51,7 +51,7 @@ switch ($level) {
 @isset($actionText)
 @slot('subcopy')
 @lang(
-"\":actionText\"ボタンがうまくクリックできない場合は、以下のURLをコピーしてブラウザに貼り付けてください:",
+"上記ボタンがクリックできない場合は、こちらのURLをクリックして設定を完了させてください。<br>\n",
 [
 'actionText' => $actionText,
 ]

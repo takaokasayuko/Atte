@@ -28,9 +28,9 @@ class AuthServiceProvider extends ServiceProvider
 
         VerifyEmail::toMailUsing(function ($notifiable, $url) {
             return (new MailMessage)
-                ->subject('メールアドレスの確認')
-                ->line('下のボタンをクリックして登録してください')
-                ->action('メールアドレスの登録', $url);
+                ->subject('【Atte】メールアドレスの確認')
+                ->line('下のボタンをクリックして認証を完了させてください')
+                ->action('このメールアドレスで認証', $url);
         });
     }
 }
