@@ -18,10 +18,10 @@
 会員登録のパスワードは8文字以上で登録
 
 ## 機能一覧
-1. ログイン機能
-2. 勤務開始 勤務終了-> 日を跨いた時点で翌日の出勤操作に切り替わる
-3. 休憩開始 休憩終了-> 1日で何度も休憩が可能
-4. 日付別勤怠情報取得-> 5件ずつ取得
+1. メール認証機能
+2. 勤務開始 勤務終了: 1日1回まで。日を跨いた時点で翌日の出勤操作に切り替わる
+3. 休憩開始 休憩終了: 1日で何度も休憩が可能
+4. 日付別勤怠情報取得 : 該当の日に出勤したユーザーの勤務時間を5件ずつ取得。またユーザーごとに1か月の勤務情報を取得できる。
 
 ## 使用技術（実行環境）
 - php 8.3.2
@@ -68,5 +68,32 @@ php artisan migrate
 ```bash
 php artisan db:seed
 ```
+
+### メール環境構築
+*GmailのSMTPサーバーを利用した方法を記載しています。*
+
+1. Googleアカウントのセキュリティの「2段階プロセス」を有効
+2. アプリパスワードの発行
+3. .envファイルの環境変数に設定
+
+```text
+APP_NAME=Atte
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME= //メールアドレス
+MAIL_PASSWORD= //アプリパスワード
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS= //メールアドレス
+```
+
+4. キャッシュクリア
+
+```text
+php artisan cache:clear
+php artisan config:clear
+php artisan route:clear
+php artisan config:cache
+```
+
 
 
