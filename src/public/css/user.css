@@ -1,66 +1,75 @@
-.attendance__date{
+.attendance__date {
   text-align: center;
 }
 
-.attendance__table{
+.attendance__table {
   width: 90%;
   border-collapse: collapse;
   margin: 30px auto;
 }
 
-.attendance__row{
+.attendance__row,
+.total__row {
   border-top: solid 1px #A9A9A9;
-
 }
-
-.attendance__label{
+.attendance__label {
   font-size: 18px;
 }
-.attendance__data{
+.attendance__data {
   font-size: 16px;
 }
 
 .attendance__label,
-.attendance__data{
+.attendance__data {
   padding: 15px 40px;
   text-align: center;
 }
 
+.total__label{
+  font-size: 20px;
+  padding: 15px 40px;
+  font-weight: bolder;
+}
+
+
 /* 勤怠のページネーション */
-.pagination{
+.pagination {
   display: flex;
   justify-content: center;
   margin: 20px;
 }
-.page-item{
+
+.page-item {
   padding: 10px 15px;
   border: 0.5px solid #A9A9A9;
   color: #2384CF;
   background-color: white;
 }
-.active{
+
+.active {
   background-color: #2384CF;
   color: white;
 }
-.pagination__link{
+
+.pagination__link {
   text-decoration: none;
   color: #2384CF;
 }
 
 /* 日付のページネーション */
 
-.pagination__date{
+.pagination__date {
   margin: 10px auto 0;
   width: 30%;
   display: flex;
   justify-content: space-between;
 }
 
-.attendance__date{
+.attendance__date {
   display: inline-block;
 }
 
-.pagination__date-link{
+.pagination__date-link {
   font-size: 20px;
   text-decoration: none;
   color: #2384CF;
