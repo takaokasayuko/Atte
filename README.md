@@ -8,6 +8,10 @@
 
 ![日付別勤怠ページ](img/date.png)
 
+![ユーザー一覧ページ](img/userlist.png)
+
+![ユーザー詳細ページ](img/userdetail.png)
+
 ## 作成した目的
 人事評価のため
 
